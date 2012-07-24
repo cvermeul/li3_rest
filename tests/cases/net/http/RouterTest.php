@@ -35,7 +35,7 @@ class RouterTest extends \lithium\test\Unit {
 			'REQUEST_METHOD' => 'GET'
 		)));
 		$params = Router::process($request)->params;
-		$expected = array('controller' => 'posts', 'action' => 'index');
+		$expected = array('controller' => 'Posts', 'action' => 'index');
 		$this->assertEqual($expected, $params);
 
 
@@ -43,7 +43,7 @@ class RouterTest extends \lithium\test\Unit {
 			'REQUEST_METHOD' => 'GET'
 		)));
 		$params = Router::process($request)->params;
-		$expected = array('controller' => 'posts', 'action' => 'show', 'id' => '1234');
+		$expected = array('controller' => 'Posts', 'action' => 'show', 'id' => '1234');
 		$this->assertEqual($expected, $params);
 		$this->assertEqual('/posts/1234', Router::match($params));
 
@@ -51,21 +51,21 @@ class RouterTest extends \lithium\test\Unit {
 			'REQUEST_METHOD' => 'PUT'
 		)));
 		$params = Router::process($request)->params;
-		$expected = array('controller' => 'posts', 'action' => 'update', 'id' => '1234');
+		$expected = array('controller' => 'Posts', 'action' => 'update', 'id' => '1234');
 		$this->assertEqual($expected, $params);
 
 		$request = new Request(array('url' => '/posts', 'env' => array(
 			'REQUEST_METHOD' => 'POST'
 		)));
 		$params = Router::process($request)->params;
-		$expected = array('controller' => 'posts', 'action' => 'create');
+		$expected = array('controller' => 'Posts', 'action' => 'create');
 		$this->assertEqual($expected, $params);
 
 		$request = new Request(array('url' => '/posts/1234', 'env' => array(
 			'REQUEST_METHOD' => 'DELETE'
 		)));
 		$params = Router::process($request)->params;
-		$expected = array('controller' => 'posts', 'action' => 'delete', 'id' => '1234');
+		$expected = array('controller' => 'Posts', 'action' => 'delete', 'id' => '1234');
 		$this->assertEqual($expected, $params);
 
 	}
@@ -81,13 +81,13 @@ class RouterTest extends \lithium\test\Unit {
 
 		$request = new Request(array('url' => '/posts.json'));
 		$result = Router::process($request)->params;
-		$expected = array('controller' => 'posts', 'action' => 'index', 'type' => 'json');
+		$expected = array('controller' => 'Posts', 'action' => 'index', 'type' => 'json');
 		$this->assertEqual($expected, $result);
 
 
 		$request = new Request(array('url' => '/posts/1234.json'));
 		$result = Router::process($request)->params;
-		$expected = array('controller' => 'posts', 'action' => 'show', 'id' => '1234', 'type' => 'json');
+		$expected = array('controller' => 'Posts', 'action' => 'show', 'id' => '1234', 'type' => 'json');
 		$this->assertEqual($expected, $result);
 	}
 }
