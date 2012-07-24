@@ -27,13 +27,13 @@ use lithium\util\String;
  * This will automatically generate this CRUD routes for you (output similar to `li3 route`):
  *
  * {{{
- * /posts(.{:type:\w+})*                               	    {"controller":"posts","action":"index"}
- * /posts/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})*        	{"controller":"posts","action":"show"}
- * /posts/add                          	                    {"controller":"posts","action":"add"}
- * /posts(.{:type:\w+})*                            	    {"controller":"posts","action":"create"}
- * /posts/{:id:[0-9a-f]{24}|[0-9]+}/edit	                {"controller":"posts","action":"edit"}
- * /posts/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})*       	{"controller":"posts","action":"update"}
- * /posts/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})*       	{"controller":"posts","action":"delete"}
+ * /posts                                   {"controller":"posts","action":"index"}
+ * /posts/{:id:[0-9a-f]{24}|[0-9]+}         {"controller":"posts","action":"show"}
+ * /posts/add                               {"controller":"posts","action":"add"}
+ * /posts                                   {"controller":"posts","action":"create"}
+ * /posts/{:id:[0-9a-f]{24}|[0-9]+}/edit    {"controller":"posts","action":"edit"}
+ * /posts/{:id:[0-9a-f]{24}|[0-9]+}         {"controller":"posts","action":"update"}
+ * /posts/{:id:[0-9a-f]{24}|[0-9]+}         {"controller":"posts","action":"delete"}
  * }}}
  *
  * This routes look complex in the first place, but they try to be as flexible as possible. You can pass
@@ -51,7 +51,7 @@ use lithium\util\String;
  * }}}
  *
  */
-class Resource extends \lithium\core\Object {
+class Resource extends \lithium\core\StaticObject {
 
 	/**
 	 * Classes used by `Resource`.
@@ -123,23 +123,22 @@ class Resource extends \lithium\core\Object {
 	 */
 	public static function connect($resource, $options = array()) {
 		$resource = Inflector::tableize($resource);
-		$class = static::$_classes['route'];
 
 		$types = static::$_types;
 		if (isset($options['types'])) {
 			$types = $options['types'] + $types;
 		}
 
-		$routes = array();
+		$configs = array();
 		foreach (static::$_types as $action => $params) {
 			$config = array(
 				'template' => String::insert($params['template'], array('resource' => $resource)),
 				'params' => $params['params'] + array('controller' => $resource, 'action' => $action)
 			);
-			$routes[] = new $class($config);
+			$configs[] = $config;
 		}
 
-		return $routes;
+		return $configs;
 	}
 }
 
