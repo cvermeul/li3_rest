@@ -50,6 +50,25 @@ use lithium\util\String;
  * DELETE /posts/1234 or /posts/1234.json => Deletes the post with the ID 1234
  * }}}
  *
+ * Restricting the Routes Created
+ * By default, connecting a resource creates routes for the seven default actions (index, show, add, create, edit, update, and delete)
+ * for every RESTful route in your application. You can use the `only` and `except` options to fine-tune this behavior.
+ * The `only` option tells Lithium to create only the specified routes:
+ *
+ * {{{
+ * Resource::connect('posts', array('only' => array('index', 'show')));
+ * }}}
+ *
+ * Now, a GET request to /posts would succeed, but a POST request to /posts (which would ordinarily be routed to the create action) will fail.
+ *
+ * The `except` option specifies a route or list of routes that Lithium should not create:
+ *
+ * {{{
+ * Resource::connect('posts', array('except' => 'delete'));
+ * }}}
+ *
+ * In this case, Lithium will create all of the normal routes except the route for delete (a DELETE request to /posts/:id).
+ *
  */
 class Resource extends \lithium\core\StaticObject {
 
@@ -123,14 +142,28 @@ class Resource extends \lithium\core\StaticObject {
 	 */
 	public static function connect($resource, $options = array()) {
 		$resource = Inflector::tableize($resource);
-
 		$types = static::$_types;
+
 		if (isset($options['types'])) {
 			$types = $options['types'] + $types;
 		}
 
+		if (isset($options['except'])) {
+			foreach (array_intersect((array) $options['except'], array_keys($types)) as $k) {
+				unset($types[$k]);
+			}
+		}
+
+		if (isset($options['only'])) {
+			foreach (array_keys($types) as $k) {
+				if (!in_array($k, (array) $options['only'])) {
+					unset($types[$k]);
+				}
+			}
+		}
+
 		$configs = array();
-		foreach (static::$_types as $action => $params) {
+		foreach ($types as $action => $params) {
 			$config = array(
 				'template' => String::insert($params['template'], array('resource' => $resource)),
 				'params' => $params['params'] + array('controller' => $resource, 'action' => $action)
