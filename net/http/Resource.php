@@ -114,6 +114,10 @@ class Resource extends \lithium\core\StaticObject {
 		'delete' => array(
 			'template' => '/{:resource}/{:id:[0-9a-f]{24}|[0-9]+}',
 			'params' => array('http:method' => 'DELETE')
+		),
+		'bulk' => array(
+			'template' => '/{:resource}/bulk',
+			'params' => array('http:method' => 'POST')
 		)
 	);
 
@@ -141,7 +145,6 @@ class Resource extends \lithium\core\StaticObject {
 	 * @param array $options
 	 */
 	public static function connect($resource, $options = array()) {
-		$resource = Inflector::tableize($resource);
 		$types = static::$_types;
 
 		if (isset($options['types'])) {
@@ -165,7 +168,7 @@ class Resource extends \lithium\core\StaticObject {
 		$configs = array();
 		foreach ($types as $action => $params) {
 			$config = array(
-				'template' => String::insert($params['template'], array('resource' => $resource)),
+				'template' => String::insert($params['template'], array('resource' => Inflector::underscore($resource))),
 				'params' => $params['params'] + array('controller' => $resource, 'action' => $action)
 			);
 			$configs[] = $config;

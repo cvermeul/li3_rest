@@ -1,5 +1,5 @@
 {
-    "name": "mehlah/li3_rest",
+    "name": "Cvermeul/li3_rest",
     "description": "This plugin allows you to quickly declare all of the common routes for a given resourceful controller.",
     "type": "lithium-library",
     "require": {
