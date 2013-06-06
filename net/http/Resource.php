@@ -145,6 +145,13 @@ class Resource extends \lithium\core\StaticObject {
 	 * @param array $options
 	 */
 	public static function connect($resource, $options = array()) {
+		$resources = explode('/', $resource);
+		$controller = $resources[count($resources) - 1];
+		$resource = Inflector::underscore($controller);
+		for ($i = count($resources) - 2; $i >= 0; $i--) {
+			$resource = Inflector::underscore($resources[$i]).'/{:'.Inflector::underscore($resources[$i]).'_id:[0-9a-f]{24}|[0-9]+}/'.$resource;
+		}
+
 		$types = static::$_types;
 
 		if (isset($options['types'])) {
@@ -168,8 +175,8 @@ class Resource extends \lithium\core\StaticObject {
 		$configs = array();
 		foreach ($types as $action => $params) {
 			$config = array(
-				'template' => String::insert($params['template'], array('resource' => Inflector::underscore($resource))),
-				'params' => $params['params'] + array('controller' => $resource, 'action' => $action)
+				'template' => String::insert($params['template'], array('resource' => $resource)),
+				'params' => $params['params'] + array('controller' => $controller, 'action' => $action)
 			);
 			$configs[] = $config;
 		}
